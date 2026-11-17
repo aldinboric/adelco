@@ -44,6 +44,15 @@ import {
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const HEX_REGEX = /^#[0-9A-Fa-f]{6}$/;
 
+console.log(`[AdelCo] Booting Node ${process.version} (NODE_ENV=${process.env.NODE_ENV}, PORT=${PORT})`);
+
+process.on('uncaughtException', (err) => {
+  console.error('[AdelCo Fatal] Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[AdelCo Fatal] Unhandled Rejection:', reason);
+});
+
 const uploadMemory = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 25 * 1024 * 1024 },
@@ -219,9 +228,12 @@ async function buildDraftPayloadForExport(body: {
 }
 
 async function startServer() {
+  console.log('[AdelCo] Initializing data directory and SQLite database...');
   ensureDataDirs();
   getDb();
+  console.log('[AdelCo] Database connected. Checking seeds...');
   await seedInitialDataIfEmpty();
+  console.log('[AdelCo] Ready. Starting Express server...');
 
   const app = express();
   app.use(express.json({ limit: '5mb' }));
