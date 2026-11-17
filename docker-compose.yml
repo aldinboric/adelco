@@ -1,0 +1,15 @@
+services:
+  adelco-app:
+    build: .
+    container_name: adelco_quote_catalog
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - adelco_data:/app/data
+
+volumes:
+  adelco_data:
